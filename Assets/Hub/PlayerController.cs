@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float sprintSpeed;
     [SerializeField] private float crouchSpeed;
     [SerializeField] private float crouchSprintSpeed;
-
     [SerializeField] private float jumpForce;
 
     [Header("Camera")]
@@ -33,11 +32,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("Other")]
     private Vector3 velocity;
-
     private static float gravity = -9.81f;
     //private bool isGrounded;
 
     private CharacterController characterController;
+    [SerializeField] private LayerMask collisionLayer;
 
     void Start()
     {
@@ -58,11 +57,11 @@ public class PlayerController : MonoBehaviour
         crouchInput = crouchInputAction.action.IsPressed();
 
         // Physics
-        bool isGrounded = Physics.CheckSphere(transform.position, 0.05f);
+        bool isGrounded = Physics.CheckSphere(transform.position, 0.05f, collisionLayer);
         if (isGrounded == true && velocity.y < 0f) { velocity.y = 0f; }
         else { velocity.y += gravity * Time.deltaTime; }
 
-        bool hitCeiling = Physics.CheckSphere(transform.position + new Vector3( 0f, characterController.height * transform.localScale.y, 0f), 0.05f);
+        bool hitCeiling = Physics.CheckSphere(transform.position + new Vector3( 0f, characterController.height * transform.localScale.y, 0f), 0.05f, collisionLayer);
         if (hitCeiling == true && velocity.y > 0f) { velocity.y = 0f; }
 
         characterController.Move(velocity * Time.deltaTime);
@@ -99,10 +98,5 @@ public class PlayerController : MonoBehaviour
 
         transform.eulerAngles += new Vector3(0f, lookInput.x, 0f) * mouseSensitivity * Time.deltaTime;
         cameraTransform.eulerAngles += new Vector3(lookInput.y, 0f, 0f) * invertedMouseY * mouseSensitivity * Time.deltaTime;
-    }
-
-    private void Jump()
-    {
-        velocity = new Vector3(0f, jumpForce, 0f);
     }
 }

@@ -7,8 +7,8 @@ public class Gun : MonoBehaviour
     [SerializeField] private LayerMask collisionLayer;
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject projectile;
-    [SerializeField] private float range;
-    [SerializeField] private float speed;
+    [SerializeField] private float range; // meters
+    [SerializeField] private float speed; // meters/seconds
 
     [Header("Input")]
     [SerializeField] private InputActionReference fireInputAction;
@@ -31,7 +31,7 @@ public class Gun : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, range, collisionLayer))
         {
-            Debug.Log("Hit object: " + hit.transform.gameObject.name);
+            //Debug.Log("Hit object: " + hit.transform.gameObject.name);
             firePoint.LookAt(hit.point);
         }
         else
@@ -41,6 +41,7 @@ public class Gun : MonoBehaviour
 
         GameObject shootProjectile = Instantiate(projectile, firePoint.position, firePoint.rotation);
         shootProjectile.GetComponent<Projectile>().SetVelocity(firePoint.forward.normalized * speed);
-        Destroy(shootProjectile, range / speed);
+        float distance = hit.distance > 0 ? hit.distance : range;
+        Destroy(shootProjectile, distance / speed);
     }
 }

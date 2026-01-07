@@ -32,6 +32,11 @@ public class PlayerController : MonoBehaviour
     private bool sprintInput;
     private bool crouchInput;
 
+    [Header("Sound")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip moveClip;
+    [SerializeField] private AudioClip sprintClip;
+
     [Header("Other")]
     private Vector3 velocity;
     private static float gravity = -9.81f;
@@ -44,6 +49,7 @@ public class PlayerController : MonoBehaviour
     {
         cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").transform;
         characterController = GetComponent<CharacterController>();
+        audioSource = GetComponent<AudioSource>();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -78,7 +84,7 @@ public class PlayerController : MonoBehaviour
 
         if (crouchInput == true) { Crouch(); }
         else { Uncrouch(); }
-        
+
         if (sprintInput == true) { Sprint(); }
 
         if (jumpInput == true)
@@ -91,11 +97,19 @@ public class PlayerController : MonoBehaviour
 
         Movement();
         Rotation();
-    }
 
-    private void PlayerInput()
-    {
+        // Sound
+        if (movementInput != Vector2.zero)
+        {
+            if (sprintInput) { audioSource.clip = sprintClip; }
+            else { audioSource.clip = moveClip; }
 
+            if (audioSource.isPlaying == false) { audioSource.Play(); }
+        }
+        else
+        {
+            audioSource.Stop();
+        }
     }
 
     private void Movement()

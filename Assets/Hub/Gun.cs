@@ -14,9 +14,13 @@ public class Gun : MonoBehaviour
     [SerializeField] private InputActionReference fireInputAction;
     private bool fireInput;
 
+    [Header("Sound")]
+    [SerializeField] private AudioSource audioSource;
+
     void Start()
     {
         cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Transform>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -43,5 +47,7 @@ public class Gun : MonoBehaviour
         shootProjectile.GetComponent<Projectile>().SetVelocity(firePoint.forward.normalized * speed);
         float distance = hit.distance > 0 ? hit.distance : range;
         Destroy(shootProjectile, distance / speed);
+
+        audioSource.Play();
     }
 }
